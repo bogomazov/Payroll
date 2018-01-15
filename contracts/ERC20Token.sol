@@ -1,5 +1,7 @@
 pragma solidity ^0.4.8;
 
+interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public; }
+
 interface ERC20 {
     function totalSupply() public view returns (uint);
     function balanceOf(address guy) public view returns (uint);
@@ -83,6 +85,14 @@ contract ERC20Token is ERC20 {
         allowed[msg.sender][_spender] = _value;
         Approval(msg.sender, _spender, _value);
         return true;
+    }
+
+    function approveAndCall(address _spender, uint256 _value, bytes _extraData) public returns (bool success) {
+        tokenRecipient spender = tokenRecipient(_spender);
+        if (approve(_spender, _value)) {
+            spender.receiveApproval(msg.sender, _value, this, _extraData);
+            return true;
+        }
     }
 
     function allowance(address _owner, address _spender)

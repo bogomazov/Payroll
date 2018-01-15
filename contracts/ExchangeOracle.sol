@@ -1,19 +1,32 @@
 pragma solidity ^0.4.8;
 
 import "./ERC20Token.sol";
+import "./Utils.sol";
 
 interface ExchangeSubscriber {
   function setExchangeRate(address token, uint256 usdExchangeRate) public;
+  /* called once right after subscription */
+  function supportedExchangeTokens(address[] tokens) public;
 }
 
 contract ExchangeOracle {
+  using Utils for address[];
+
+  address owner;
   address[] subscribers;
   address[] supportedTokens;
   mapping (address => uint) tokenPrice;
 
+  modifier onlyOwner() {
+    require(msg.sender == owner);
+    _;
+  }
+
   function ExchangeOracle(address[] tokens, uint[] prices) public {
     require(tokens.length > 0);
     require(tokens.length  == prices.length);
+
+    owner = msg.sender;
     supportedTokens = tokens;
 
     for (uint i = 0; i < tokens.length; i++) {
@@ -25,6 +38,7 @@ contract ExchangeOracle {
 
   /* subscribes to all supported tokens */
   function subscribe() public {
+    ExchangeSubscriber(msg.sender).supportedExchangeTokens(supportedTokens);
     for (uint i = 0; i < supportedTokens.length; i++) {
       /* verify subscriber interface */
       ExchangeSubscriber(msg.sender).setExchangeRate(supportedTokens[i], tokenPrice[supportedTokens[i]]);
@@ -32,13 +46,11 @@ contract ExchangeOracle {
     subscribers.push(msg.sender);
   }
 
-  function updateExchange(address token, uint256 price) public {
-    /* verify that the address is indeed the token */
+  function updatePrice(address token, uint256 price) public onlyOwner {
+    /* simply verify that the address is indeed the token */
     require(ERC20Token(token).totalSupply() > 0);
+    require(supportedTokens.contains(token));
     require(price > 0);
-    if (tokenPrice[token] == 0) {
-      supportedTokens.push(token);
-    }
 
     tokenPrice[token] = price;
 

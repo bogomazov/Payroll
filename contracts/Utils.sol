@@ -30,4 +30,12 @@ library Utils {
     }
     return mint;
   }
+
+  function contains(address[] storage self, address addr) public view returns (bool isSupported) {
+    for (uint i = 0; i < self.length && !isSupported; i++) {
+      isSupported = self[i] == addr;
+    }
+
+    return isSupported;
+  }
 }
