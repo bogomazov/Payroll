@@ -1,6 +1,7 @@
 var ERC20Token = artifacts.require("./ERC20Token.sol");
 var Utils = artifacts.require("./Utils.sol");
 var Payroll = artifacts.require("./Payroll.sol");
+var PayrollInterface = artifacts.require("./PayrollInterface.sol");
 var ExchangeOracle = artifacts.require("./ExchangeOracle.sol");
 
 module.exports = async function(deployer) {

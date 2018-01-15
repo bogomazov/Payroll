@@ -47,7 +47,7 @@ contract ExchangeOracle {
   }
 
   function updatePrice(address token, uint256 price) public onlyOwner {
-    /* simply verify that the address is indeed the token */
+    /* partial verification that the address is ERC20Token */
     require(ERC20Token(token).totalSupply() > 0);
     require(supportedTokens.contains(token));
     require(price > 0);

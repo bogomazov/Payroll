@@ -3,9 +3,10 @@ pragma solidity ^0.4.8;
 import "./Utils.sol";
 import "./ERC20Token.sol";
 import "./ExchangeOracle.sol";
+import "./PayrollInterface.sol";
 
 /* POSSIBLE ENHANCEMENT: allow multiple exchanges */
-contract Payroll is ExchangeSubscriber, tokenRecipient {
+contract Payroll is PayrollInterface, ExchangeSubscriber, tokenRecipient {
   using Utils for address[];
 
   struct Employee {
@@ -81,6 +82,7 @@ contract Payroll is ExchangeSubscriber, tokenRecipient {
     oracle = oracleAddr;
     ExchangeOracle(oracleAddr).subscribe();
   }
+
   /* OWNER ONLY */
   /* @return unique employee id */
   function addEmployee(address accountAddress, address[] allowedTokens, uint256 initialYearlyUSDSalary) external onlyOwner positive(initialYearlyUSDSalary) {
