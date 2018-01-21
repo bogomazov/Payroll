@@ -25,16 +25,12 @@ contract('Payroll', ([owner, employee1, employee2]) => {
     tokenInstance = await ERC20Token.deployed();
     utilsInstance = await Utils.deployed();
 
-    test();
     await payrollInstance.subscribeToOracle(exchangeInstance.address);
-    test();
     await tokenInstance.approveAndCall(payrollInstance.address, employee1Salary + 400, "", {from: owner});
   })
 
-  it("tests interactions", async () => {
-    test();
+  it("is a simple test", async () => {
     await exchangeInstance.updatePrice(tokenInstance.address, 1);
-    test();
     const transaction = await payrollInstance.addEmployee(employee1, [tokenInstance.address], employee1Salary)
     const transaction2 = await payrollInstance.addEmployee(employee2, [tokenInstance.address], 1000)
     const employee1Id = transaction.logs[0].args.employeeId.valueOf();
@@ -43,14 +39,10 @@ contract('Payroll', ([owner, employee1, employee2]) => {
     assert.equal((await payrollInstance.calculatePayrollRunway.call()).valueOf(), 166, "calculatePayrollRunway");
     assert.equal((await payrollInstance.getEmployeeCount.call()).valueOf(), 2, "# of employees");
 
-    test();
     await payrollInstance.payday({from: employee1});
 
-    test();
     await tokenInstance.transferFrom(payrollInstance.address, employee1, Math.floor(employee1Salary / 12), {from: employee1});
-    test();
     assert.equal((await tokenInstance.balanceOf.call(employee1)).valueOf(), Math.floor(employee1Salary / 12), "balance of employee1");
-    test();
     const employeeData = (await payrollInstance.getEmployee(employee1Id)).valueOf();
     assert.equal(employeeData[0], employee1);
     assert.equal(employeeData[1], employee1Salary);
