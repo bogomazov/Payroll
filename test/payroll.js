@@ -11,17 +11,27 @@ function test() {
 }
 
 contract('Payroll', ([owner, employee1, employee2]) => {
-  it("test workflow", async () => {
-    const payrollInstance = await Payroll.deployed(100000, 'USD');
-    const exchangeInstance = await ExchangeOracle.deployed();
-    const tokenInstance = await ERC20Token.deployed();
-    const utilsInstance = await Utils.deployed();
-    const employee1Salary = 100;
+
+  const employee1Salary = 100;
+
+  let payrollInstance;
+  let exchangeInstance;
+  let tokenInstance;
+  let utilsInstance;
+
+  beforeEach(async () => {
+    payrollInstance = await Payroll.deployed(100000, 'USD');
+    exchangeInstance = await ExchangeOracle.deployed();
+    tokenInstance = await ERC20Token.deployed();
+    utilsInstance = await Utils.deployed();
 
     test();
     await payrollInstance.subscribeToOracle(exchangeInstance.address);
     test();
     await tokenInstance.approveAndCall(payrollInstance.address, employee1Salary + 400, "", {from: owner});
+  })
+
+  it("tests interactions", async () => {
     test();
     await exchangeInstance.updatePrice(tokenInstance.address, 1);
     test();
