@@ -7,7 +7,7 @@ Several ```contracts/``` were created during the process:
 - ERC20Token.sol - ERC20 token. Copied and modified code.
 - ExchangeOracle.sol - For testing purposes. Pub-sub pattern.
 - PayrollInterface.sol - taken from http://wiki.aragon.one/jobs/openings/solidity/
-- Payroll.sol - business logic
+- Payroll.sol - business logic.
 
 To run tests on testrpc  <br/>
 ```npm install``` <br/>
